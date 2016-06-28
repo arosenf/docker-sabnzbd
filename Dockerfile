@@ -21,12 +21,14 @@ RUN chmod 755 /sabnzbd.sh
 
 RUN export SABNZBD_VERSION=1.0.3 PAR2CMDLINE_VERSION=v0.6.14 \
     && sed -i "s/ main$/ main contrib non-free/" /etc/apt/sources.list \
-    && sed -i "s/^deb\(.*\)/&\ndeb-src\1/" /etc/apt/sources.list \
     && apt-get -q update \
-    && apt-get -qy build-dep unrar-nonfree \
-    && apt-get -qy source -b unrar-nonfree \
-    && dpkg -i unrar_4.1.4-1+deb7u1_armhf.deb \
     && apt-get install -qy curl ca-certificates python-cheetah python-openssl python-yenc unzip p7zip-full build-essential automake \
+    && curl -o /tmp/unrarsrc.tar.gz http://www.rarlab.com/rar/unrarsrc-5.4.2.tar.gz \
+    && tar xzf /tmp/unrarsrc.tar.gz -C /tmp \
+    && cd /tmp/unrar \
+    && make -f makefile \
+    && install -v -m755 unrar /usr/bin \
+    && cd / \
     && curl -o /tmp/sabnzbd.tar.gz https://codeload.github.com/sabnzbd/sabnzbd/tar.gz/${SABNZBD_VERSION} \
     && tar xzf /tmp/sabnzbd.tar.gz \
     && mv sabnzbd-* sabnzbd \
